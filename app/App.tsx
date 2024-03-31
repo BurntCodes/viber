@@ -7,9 +7,12 @@ import { StyleSheet, Text, View } from 'react-native';
 import { getSpotifyToken } from './src/Api.tsx';
 import { styles } from './src/styles/styles.js';
 
+// Utilites
+import { axiosInstance } from './src/Utils.tsx';
+
 const App = () => {
     useEffect(() => {
-        getSpotifyToken();
+        getSpotifyToken(axiosInstance);
     }, []);
 
     return (

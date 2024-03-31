@@ -1,6 +1,8 @@
 // Node packages
-import axios from 'axios';
 import querystring from 'querystring';
+
+// Utilities
+import { axiosInstance } from './Utils.tsx';
 
 const BASE_URL: string = 'http://192.168.20.15:5000';
 const CLIENT_ID: string = '49cf60e6226342958c119f100d66bdf6';
@@ -17,8 +19,8 @@ interface SpotifyTokenRequestData {
     client_secret: string;
 }
 
-export const getSpotifyToken = async () => {
-    const url: string = `${BASE_URL}/spotify_token`;
+export const getSpotifyToken = async (axios: AxiosInstance) => {
+    const url: string = `${BASE_URL}/auth/spotify_token`;
     const data: SpotifyTokenRequestData = {
         client_id: CLIENT_ID,
         client_secret: CLIENT_SECRET,
@@ -33,16 +35,7 @@ export const getSpotifyToken = async () => {
         console.log('Token:', response.data);
         return response.data;
     } catch (error) {
-        // Log the error details
-        console.error('Axios Error:', error);
-        if (error.response) {
-            console.error('Response Data:', error.response.data);
-            console.error('Response Status:', error.response.status);
-            console.error('Response Headers:', error.response.headers);
-        } else if (error.request) {
-            console.error('No response received:', error.request);
-        } else {
-            console.error('Error:', error.message);
-        }
+        console.error('Stack Trace:', error.stack);
+        console.error(error);
     }
 };
