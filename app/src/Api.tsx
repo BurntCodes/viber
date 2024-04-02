@@ -4,7 +4,7 @@ import { Linking } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 import { AxiosResponse } from 'axios';
 import axios from 'axios';
-import { axiosInstance } from './Utils';
+import { axiosInstance } from './Utils.tsx';
 
 const BASE_URL: string = 'http://192.168.20.15:5000';
 const CLIENT_ID: string = '49cf60e6226342958c119f100d66bdf6';
