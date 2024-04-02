@@ -1,22 +1,31 @@
 // Node packages
-import { StatusBar } from 'expo-status-bar';
-import React, { useEffect } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-// React components
-import { getSpotifyToken } from './src/Api.tsx';
-import { styles } from './src/styles/styles.js';
+// Local
+import { login, getAdminToken, generateState } from './src/Api.tsx';
+
+// Screens
+import HomeScreen from './src/screens/HomeScreen.tsx';
+
+// Utilities
+import { axiosInstance } from './src/Utils.tsx';
+
+const Stack = createNativeStackNavigator();
 
 const App = () => {
     useEffect(() => {
-        getSpotifyToken();
+        generateState(axiosInstance);
+        login(axiosInstance);
     }, []);
 
     return (
-        <View style={styles.container}>
-            <Text>Open up App.tsx to start working on your app!</Text>
-            <StatusBar style="auto" />
-        </View>
+        <NavigationContainer>
+            <Stack.Navigator initialRouteName="HomeScreen">
+                <Stack.Screen name="HomeScreen" component={HomeScreen} />
+            </Stack.Navigator>
+        </NavigationContainer>
     );
 };
 
