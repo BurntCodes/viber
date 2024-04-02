@@ -1,5 +1,11 @@
+// Node packages
 import axios, { AxiosInstance } from 'axios';
 
+/**
+ * Sets up and configures a base Axios instance with error handling.
+ *
+ * @returns {AxiosInstance} The configured Axios instance.
+ */
 const setupAxiosInstance = () => {
     // Base Axios Instance
     const instance = axios.create({});
