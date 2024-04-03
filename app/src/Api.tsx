@@ -44,15 +44,13 @@ export const getAdminToken = async (axios: AxiosInstance) => {
     }
 };
 
-export const login = async (axios: axiosInstance) => {
+export const login = async () => {
     const url: string = `${BASE_URL}/auth/get_auth_code?client_id=${CLIENT_ID}`;
 
     try {
-        Linking.openURL(url)
-            .then(() => {
-                console.log(`Redirected successfully to ${url}`);
-            })
-            .catch((error) => console.error('Failed to redirect:', error));
+        Linking.openURL(url).catch((error) =>
+            console.error('Failed to redirect:', error)
+        );
     } catch (error) {
         console.error('Stack Trace:', error.stack);
         console.error(error);
