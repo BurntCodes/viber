@@ -29,6 +29,7 @@
     "manifest": {
       "hostUri": "exp://192.168.20.15:8081"
     },
+    "scheme": "exp",
     "plugins": [
       "expo-secure-store"
     ]

@@ -76,7 +76,7 @@ def handle_auth_callback():
         return "No auth code received from spotify"
 
     # Check if our state token was tampered with
-    if int(request.args.get("state")) != 123:
+    if int(request.args.get("state")) != 123: # ! need to get state session_token working
         print("(/auth_callback) -- State did not match session_token when receiving response")
         return "State <> session_token mismatch"
 
@@ -104,9 +104,13 @@ def handle_auth_callback():
         "https://accounts.spotify.com/api/token", data=payload, headers=headers
     )
 
+    access_token = response.json()
+
     if response.status_code == 200:
-        session["access_token"] = response.json()
-        return "access_token stored"
+        session["access_token"] = access_token
+        print(f"myapp://192.168.20.15:8081/HomeScreen?success=true&access_token={access_token}")
+        return redirect(f"exp://192.168.20.15:8081?success=true&access_token={access_token}")
+
     else:
         return (
             jsonify({"error": "Failed to get token from Spotify API"}),
