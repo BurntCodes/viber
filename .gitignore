@@ -38,4 +38,5 @@ venv/
 %ProgramData%/
 .prettierrc
 .vscode/
-api/__pycache__/
+api/route/__pycache__/
+api/__pycache__
