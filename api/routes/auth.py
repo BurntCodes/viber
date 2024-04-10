@@ -8,10 +8,12 @@ from .utilities import helpers
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 
-@auth_bp.route("/generate_state", methods=["GET"])
-def generate_state():
+tokens = {}
+
+@auth_bp.route("/generate_session_token", methods=["GET"])
+def generate_session_token():
     session_token = helpers.get_secret_token()
-    session["session_token"] = session_token
+    tokens["session_token"] = session_token
     return jsonify({"session_token": session_token})
 
 @auth_bp.route("/get_admin_token", methods=["POST"])
@@ -44,11 +46,15 @@ def get_admin_token():
         )
 
 @auth_bp.route("/get_auth_code", methods=["GET"])
+@helpers.require_session_token
 def get_auth_code():
+    session_token = request.args.get("session_token")
+    if session_token != tokens.get("session_token"):
+            return "Missing session_token parameter", 400
+
     client_id = request.args.get("client_id")
     base_url = "https://accounts.spotify.com/authorize"
     callback_url = "http://192.168.20.15:5000/auth/auth_callback"
-
     secret_string = helpers.get_secret_string(64)
     hashed_secret_string = helpers.get_hashed_secret_string(secret_string)
     code_challenge = helpers.get_base64_digest(hashed_secret_string)
@@ -57,7 +63,7 @@ def get_auth_code():
         "client_id": client_id,
         "response_type": "code",
         "redirect_uri": callback_url,
-        "state": 123, # ! need to get state session_token working
+        "state": session_token, # ! need to get state session_token working
         "scope": "user-read-email user-read-private",
         "code_challenge_method": "S256",
         "code_challenge": code_challenge
@@ -70,13 +76,15 @@ def get_auth_code():
 
 @auth_bp.route("/auth_callback", methods=["GET"])
 def handle_auth_callback():
-    # Check if we didn"t receive an auth_code from spotify
+    # Check if we didn't receive an auth_code from spotify
     if not request.args.get("code"):
         print(request.args.get("error"))
         return "No auth code received from spotify"
 
-    # Check if our state token was tampered with
-    if int(request.args.get("state")) != 123: # ! need to get state session_token working
+    session_token = request.args.get("state")
+
+    # Check if our session token was tampered with
+    if session_token != tokens.get("session_token"): # ! need to get state session_token working
         print("(/auth_callback) -- State did not match session_token when receiving response")
         return "State <> session_token mismatch"
 
@@ -105,11 +113,11 @@ def handle_auth_callback():
     )
 
     access_token = response.json()
+    redirect_url = f"exp://192.168.20.15:8081/?success=true&access_token={access_token}"
 
     if response.status_code == 200:
         session["access_token"] = access_token
-        print(f"myapp://192.168.20.15:8081/HomeScreen?success=true&access_token={access_token}")
-        return redirect(f"exp://192.168.20.15:8081?success=true&access_token={access_token}")
+        return redirect(redirect_url)
 
     else:
         return (

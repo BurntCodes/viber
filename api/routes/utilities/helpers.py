@@ -27,3 +27,15 @@ def get_secret_token():
     token = secrets.token_urlsafe(16)
     return token
 
+from functools import wraps
+from flask import request
+
+def require_session_token(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        session_token = request.args.get("session_token")
+        if not session_token:
+            return "Missing session_token parameter", 400
+        return func(*args, **kwargs)
+    return wrapper
+

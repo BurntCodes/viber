@@ -5,7 +5,7 @@ from flask_cors import CORS
 from routes.auth import auth_bp
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'cool_secret'
+app.secret_key = 'cool_secret'
 app.register_blueprint(auth_bp)
 
 CORS(app)
@@ -27,4 +27,4 @@ def log_response_info(response):
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='192.168.20.15', port=5000, debug=True)

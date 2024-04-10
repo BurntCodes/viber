@@ -21,10 +21,6 @@ interface AdminTokenResponse {
     expires_in: number;
 }
 
-interface StateResponse {
-    state: string;
-}
-
 export const getAdminToken = async (axios: AxiosInstance) => {
     const url: string = `${BASE_URL}/auth/get_admin_token`;
     const data: AdminTokenRequestData = {
@@ -45,25 +41,13 @@ export const getAdminToken = async (axios: AxiosInstance) => {
 };
 
 export const login = async () => {
-    const url: string = `${BASE_URL}/auth/get_auth_code?client_id=${CLIENT_ID}`;
+    const sessionToken = await SecureStore.getItemAsync('sessionToken');
+    const url: string = `${BASE_URL}/auth/get_auth_code?client_id=${CLIENT_ID}&session_token=${sessionToken}`;
 
     try {
         Linking.openURL(url).catch((error) =>
             console.error('Failed to redirect:', error)
         );
-    } catch (error) {
-        console.error('Stack Trace:', error.stack);
-        console.error(error);
-    }
-};
-
-export const generateState = async (axios: AxiosInstance) => {
-    const url: string = `${BASE_URL}/auth/generate_state`;
-
-    try {
-        const response: AxiosResponse<StateResponse> = await axios.get(url);
-        session_token = response.data.session_token;
-        await SecureStore.setItemAsync('session_token', session_token);
     } catch (error) {
         console.error('Stack Trace:', error.stack);
         console.error(error);
