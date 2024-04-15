@@ -3,10 +3,12 @@ from flask_cors import CORS
 
 # Blueprints
 from routes.auth import auth_bp
+from routes.spotify import spotify_bp
 
 app = Flask(__name__)
 app.secret_key = 'cool_secret'
 app.register_blueprint(auth_bp)
+app.register_blueprint(spotify_bp)
 
 CORS(app)
 

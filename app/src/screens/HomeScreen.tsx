@@ -42,7 +42,6 @@ const HomeScreen = () => {
         <View style={styles.container}>
             <Text>~~~ VIBER ~~~</Text>
             <Button onPress={login} title="Log In" />
-            <Text>Session Token: {sessionToken}</Text>
             <StatusBar style="auto" />
         </View>
     );

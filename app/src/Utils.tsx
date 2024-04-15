@@ -44,7 +44,7 @@ export const configureAxiosInstance = (sessionToken: string): AxiosInstance => {
 };
 
 /**
- * Generates a session token and sets up Axios instance with it.
+ * Generates a session token and sets up an Axios instance with it.
  * @returns {Promise<AxiosInstance>} - A Promise that resolves with the configured Axios instance.
  */
 export const setupAxiosInstance = async (): Promise<AxiosInstance> => {
@@ -58,7 +58,7 @@ export const setupAxiosInstance = async (): Promise<AxiosInstance> => {
         // Store the session token in SecureStore
         await SecureStore.setItemAsync('sessionToken', sessionToken);
 
-        // Set up Axios instance with the generated session token
+        // Set up an Axios instance with the generated session token
         const axiosInstance: AxiosInstance =
             configureAxiosInstance(sessionToken);
 
@@ -77,7 +77,7 @@ export const setupAxiosInstance = async (): Promise<AxiosInstance> => {
     }
 };
 
-// Set up Axios instance
+// Set up our Axios instance
 const axiosInstance: Promise<AxiosInstance> = setupAxiosInstance();
 
 export { axiosInstance };

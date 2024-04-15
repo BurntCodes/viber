@@ -14,15 +14,16 @@ import AuthCallbackHandler from './src/components/AuthCallbackHandler';
 
 // TODO:
 // // TODO -- add a button that triggers the login logic
-// TODO -- get state session token working in api calls in auth.py
+// // TODO -- get state session token working in api calls in auth.py
 // // TODO -- test checking secure store on home page - display contents
 // TODO -- figure out how to set a route for the deeplink in handle_auth_callback()
 //         TODO -- have that route redirect to DashboardScreen via Navigation
 // TODO -- generic error handler in Utils.tsx
 // TODO -- typescipt-ify everything
-// TODO - Fix typescript errors in editor
+// TODO -- Fix typescript errors in editor
 // TODO -- add comments everywhere
 // TODO -- Token refresh
+// TODO -- better solution to storing session tokens than a dictionary in memory (auth.py)
 
 const Stack = createNativeStackNavigator();
 const prefix = Linking.createURL('/');

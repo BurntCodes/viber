@@ -18,9 +18,10 @@ const AuthCallbackHandler = () => {
                 const { success, access_token } = queryParams;
 
                 if (success) {
+                    const accessTokenJson = access_token.replace(/'/g, '"');
                     await SecureStore.setItemAsync(
                         'access_token',
-                        access_token
+                        accessTokenJson
                     );
 
                     navigation.navigate('Dashboard');

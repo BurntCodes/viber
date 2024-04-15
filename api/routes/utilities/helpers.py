@@ -27,6 +27,12 @@ def get_secret_token():
     token = secrets.token_urlsafe(16)
     return token
 
+def get_code_challenge(size):
+    secret_string = get_secret_string(size)
+    hashed_secret_string = get_hashed_secret_string(secret_string)
+    code_challenge = get_base64_digest(hashed_secret_string)
+    return code_challenge
+
 from functools import wraps
 from flask import request
 
