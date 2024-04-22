@@ -4,6 +4,8 @@ import { Linking } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 import { AxiosInstance, AxiosResponse } from 'axios';
 import axios from 'axios';
+
+// Utilities
 import { axiosInstance } from './Utils.tsx';
 
 // TODO: Store these somewhere
@@ -42,13 +44,14 @@ export const getAdminToken = async (axios: AxiosInstance) => {
 };
 
 /**
- * Redirect the user to the spotify login url
+ * Redirect the user to the spotify login url and receive an accessToken
  */
 /*
 -- A typical successful login:
 -      User is redirected to the spotify login url
--      User logs in and accepts the access request
--      User is then redirected via deeplink to the Dashboard Screen
+-      User logs in and accepts the access request, receiving an accessToken
+-      User is then redirected via deeplink (AuthCallbackHandler) to the Dashboard Screen
+-      accessToken is then stored in the SecureStore
 */
 export const login = async () => {
     const sessionToken = await SecureStore.getItemAsync('sessionToken');
@@ -64,6 +67,11 @@ export const login = async () => {
     }
 };
 
+/**
+ * Gets the spotify user details of the currently logged in user
+ * @param {object} accessToken - The access token to be included in the headers as Auth.
+ * @returns An object containing the spotify user details.
+ */
 export const getUserDetails = async (accessToken) => {
     const url: string = `${BASE_URL}/spotify/get_user_details`;
     const headers = {
@@ -71,11 +79,31 @@ export const getUserDetails = async (accessToken) => {
     };
 
     try {
-        const response: AxiosResponse<AdminTokenResponse> = await axios.get(
-            url,
-            { headers }
-        );
-        console.log('\ngetUserDetails response: ', response.data);
+        const response = await axios.get(url, { headers });
+        return response.data;
+    } catch (error) {
+        console.error('Stack Trace:', error.stack);
+        console.error(error);
+    }
+};
+
+/**
+ * Gets the Viber playlist
+ * @param {object} accessToken - The access token to be included in the headers as Auth.
+ * @param {string} userID - The ID of the currently logged on user
+ * @returns An object containing the Viber playlist.
+ */
+export const getViberPlaylist = async (accessToken, userID) => {
+    const url: string = `${BASE_URL}/spotify/get_playlist`;
+    const headers = {
+        Authorization: `Bearer ${accessToken.access_token}`,
+    };
+    const data = {
+        user_id = userID,
+    };
+
+    try {
+        const response = await axios.get(url, data, { headers });
         return response.data;
     } catch (error) {
         console.error('Stack Trace:', error.stack);

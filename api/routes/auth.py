@@ -1,42 +1,41 @@
 from flask import request, jsonify, Blueprint, redirect
-import requests
 from urllib.parse import urlencode
+import requests
 import base64
 
-from .utilities import helpers
+from .utilities import auth_utils
 
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 
 tokens = {}
 
+# TODO: Obfuscate these:
+CLIENT_ID = "49cf60e6226342958c119f100d66bdf6"
+CLIENT_SECRET = "d218b7960cd44529b7c4906aea895ad3"
+
 
 @auth_bp.route("/generate_session_token", methods=["GET"])
 def generate_session_token():
-    session_token = helpers.get_secret_token()
+    session_token = auth_utils.get_secret_token()
     tokens["session_token"] = session_token
     return jsonify({"session_token": session_token})
 
 
 @auth_bp.route("/get_admin_token", methods=["POST"])
 def get_admin_token():
-    client_id = request.form.get("client_id")
-    client_secret = request.form.get("client_secret")
-
-    # ! check if this function works without the harded-coded values then remove
-    client_id = "49cf60e6226342958c119f100d66bdf6"
-    client_secret = "d218b7960cd44529b7c4906aea895ad3"
+    headers = {"content-type": "application/x-www-form-urlencoded"}
 
     payload = {
         "grant_type": "client_credentials",
-        "client_id": client_id,
-        "client_secret": client_secret,
+        "client_id": CLIENT_ID,
+        "client_secret": CLIENT_SECRET,
     }
 
-    headers = {"content-type": "application/x-www-form-urlencoded"}
-
     response = requests.post(
-        "https://accounts.spotify.com/api/token", data=payload, headers=headers
+        "https://accounts.spotify.com/api/token",
+        headers=headers,
+        data=payload,
     )
 
     if response.status_code == 200:
@@ -49,7 +48,7 @@ def get_admin_token():
 
 
 @auth_bp.route("/get_auth_code", methods=["GET"])
-@helpers.require_session_token
+@auth_utils.require_session_token  # ?
 def get_auth_code():
     session_token = request.args.get("session_token")
     if session_token != tokens.get("session_token"):
@@ -91,13 +90,18 @@ def handle_auth_callback():
         )
         return "State <> session_token mismatch"
 
-    callback_url = "http://192.168.20.15:5000/auth/auth_callback"
-    client_id = "49cf60e6226342958c119f100d66bdf6"
-    client_secret = "d218b7960cd44529b7c4906aea895ad3"
+    callback_url = (
+        "http://192.168.20.15:5000/auth/auth_callback"  # for validation purposes only
+    )
 
     authorization_code = (
-        "Basic " + base64.b64encode(f"{client_id}:{client_secret}".encode()).decode()
+        "Basic " + base64.b64encode(f"{CLIENT_ID}:{CLIENT_SECRET}".encode()).decode()
     )
+
+    headers = {
+        "content-type": "application/x-www-form-urlencoded",
+        "Authorization": authorization_code,
+    }
 
     payload = {
         "grant_type": "authorization_code",
@@ -105,13 +109,10 @@ def handle_auth_callback():
         "redirect_uri": callback_url,
     }
 
-    headers = {
-        "content-type": "application/x-www-form-urlencoded",
-        "Authorization": authorization_code,
-    }
-
     response = requests.post(
-        "https://accounts.spotify.com/api/token", data=payload, headers=headers
+        "https://accounts.spotify.com/api/token",
+        headers=headers,
+        data=payload,
     )
 
     access_token = response.json()

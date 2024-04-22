@@ -3,6 +3,7 @@ import { Linking } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 import { useNavigation } from '@react-navigation/native';
 
+// TODO: Add comments
 const AuthCallbackHandler = () => {
     const navigation = useNavigation();
 
