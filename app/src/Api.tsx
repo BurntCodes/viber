@@ -94,16 +94,19 @@ export const getUserDetails = async (accessToken) => {
  * @returns An object containing the Viber playlist.
  */
 export const getViberPlaylist = async (accessToken, userID) => {
-    const url: string = `${BASE_URL}/spotify/get_playlist`;
+    const url: string = `${BASE_URL}/spotify/get_viber_playlist`;
     const headers = {
         Authorization: `Bearer ${accessToken.access_token}`,
     };
-    const data = {
-        user_id = userID,
+    const params = {
+        user_id: userID,
     };
 
     try {
-        const response = await axios.get(url, data, { headers });
+        const response = await axios.get(url, {
+            headers: headers,
+            params: params,
+        });
         return response.data;
     } catch (error) {
         console.error('Stack Trace:', error.stack);

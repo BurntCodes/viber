@@ -17,14 +17,14 @@ def add_viber_playlist(authorization, user_id):
         "public": False,
     }
 
-    response = requests.get(
+    response = requests.post(
         f"https://api.spotify.com/v1/users/{user_id}/playlists",
         headers=headers,
-        data=payload,
+        json=payload,
     )
 
-    if response.status_code == 200:
-        return response.json(), 200
+    if response.status_code == 201:
+        return response.json(), 201
     else:
         return (
             jsonify({"error": "Failed to add playlist for user"}),
@@ -48,9 +48,14 @@ def get_user_playlists(authorization, user_id):
         )
 
 
-def get_viber_playlist(user_playlists):
-    for playlist in user_playlists:
-        if playlist.name == VIBER_PLAYLIST_NAME:
+def check_for_viber_playlist(user_playlists):
+    print("\n User Playlists:")
+    print(user_playlists)
+    for playlist in user_playlists["items"]:
+        print("\nplaylist: ")
+        print(playlist)
+        if playlist["name"] == VIBER_PLAYLIST_NAME:
+            print("\nfound Viber playlist")
             return playlist
-        else:
-            return False
+    print("\nno Viber playlist found")
+    return False

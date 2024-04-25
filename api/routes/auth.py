@@ -63,7 +63,14 @@ def get_auth_code():
         "response_type": "code",
         "redirect_uri": callback_url,
         "state": session_token,
-        "scope": "user-read-email user-read-private",
+        "scope": (
+            "user-read-email "
+            "user-read-private "
+            "playlist-modify-public "
+            "playlist-modify-private "
+            "playlist-read-private "
+            "playlist-read-collaborative "
+        ),
     }
 
     query_string = urlencode(payload)

@@ -12,9 +12,9 @@ import { getUserDetails, getViberPlaylist } from '../Api';
 import { axiosInstance } from '../Utils';
 
 const DashboardScreen = () => {
-    const [accessToken, setAccessToken] = useState({});
-    const [userDetails, setUserDetails] = useState({});
-    const [viberPlaylist, setViberPlaylist] = userState({});
+    const [accessToken, setAccessToken] = useState(null);
+    const [userDetails, setUserDetails] = useState(null);
+    const [viberPlaylist, setViberPlaylist] = useState(null);
 
     useEffect(() => {
         // Get accessToken from the secureStore and store it in state
@@ -44,43 +44,38 @@ const DashboardScreen = () => {
         // Once we get an accessToken, get the user's details and store it in state
         const fetchUserDetails = async () => {
             try {
-                if (
-                    accessToken !== null &&
-                    accessToken.access_token !== undefined
-                ) {
-                    const newDetails = await getUserDetails(accessToken);
-                    console.log('\nnewDetails: ', newDetails);
-                    console.log('typeOf newDetails', typeof newDetails);
-                    await setUserDetails(newDetails);
-                    console.log('\nuserDetails:', userDetails);
-                }
+                console.log('\naccessToken:', accessToken);
+                const newDetails = await getUserDetails(accessToken);
+                await setUserDetails(newDetails);
             } catch (error) {
                 console.error('Error with fetchUserDtails', error);
             }
         };
 
-        fetchUserDetails();
+        if (accessToken !== null && accessToken.access_token !== undefined) {
+            fetchUserDetails();
+        }
     }, [accessToken]);
 
     useEffect(() => {
         const fetchViberPlaylist = async () => {
+            console.log('\nuserDetails: ', userDetails);
+            console.log('\nuserDetails.id: ', userDetails.id);
             try {
                 const fetchedViberPlaylist = await getViberPlaylist(
-                    accssToken,
-                    userDetails.user_id // !! Check this
+                    accessToken,
+                    userDetails.id
                 );
-                console.log('fetchedViberPlayist: ', fetchViberPlaylist);
                 await setViberPlaylist(fetchedViberPlaylist);
+                console.log('\nfetchedViberPlaylist: ', fetchedViberPlaylist);
             } catch (error) {
                 console.error('Error with fetchViberPlaylist', error);
             }
         };
 
-        fetchViberPlaylist();
-    }, [userDetails]);
-
-    useEffect(() => {
-        console.log('\nuserDetails:', userDetails);
+        if (userDetails !== null && userDetails.id !== undefined) {
+            fetchViberPlaylist();
+        }
     }, [userDetails]);
 
     return (
