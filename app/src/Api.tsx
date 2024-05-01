@@ -9,7 +9,7 @@ import axios from 'axios';
 import { axiosInstance } from './Utils.tsx';
 
 // TODO: Store these somewhere
-const BASE_URL: string = 'http://192.168.20.15:5000';
+const BASE_URL: string = 'http://192.168.20.9:5000';
 const CLIENT_ID: string = '49cf60e6226342958c119f100d66bdf6';
 const CLIENT_SECRET: string = 'd218b7960cd44529b7c4906aea895ad3';
 

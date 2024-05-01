@@ -15,6 +15,7 @@ CLIENT_ID = "49cf60e6226342958c119f100d66bdf6"
 CLIENT_SECRET = "d218b7960cd44529b7c4906aea895ad3"
 
 
+# TODO: use the only auth_utils functions for PKCE instead.
 @auth_bp.route("/generate_session_token", methods=["GET"])
 def generate_session_token():
     session_token = auth_utils.get_secret_token()
@@ -56,7 +57,7 @@ def get_auth_code():
 
     client_id = request.args.get("client_id")
     base_url = "https://accounts.spotify.com/authorize"
-    callback_url = "http://192.168.20.15:5000/auth/auth_callback"
+    callback_url = "http://192.168.20.9:5000/auth/auth_callback"
 
     payload = {
         "client_id": client_id,
@@ -98,7 +99,7 @@ def handle_auth_callback():
         return "State <> session_token mismatch"
 
     callback_url = (
-        "http://192.168.20.15:5000/auth/auth_callback"  # for validation purposes only
+        "http://192.168.20.9:5000/auth/auth_callback"  # for validation purposes only
     )
 
     authorization_code = (
@@ -123,7 +124,7 @@ def handle_auth_callback():
     )
 
     access_token = response.json()
-    redirect_url = f"exp://192.168.20.15:8081/?success=true&access_token={access_token}"
+    redirect_url = f"exp://192.168.20.9:8081/?success=true&access_token={access_token}"
 
     if response.status_code == 200:
         tokens["access_token"] = access_token

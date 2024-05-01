@@ -44,7 +44,6 @@ const DashboardScreen = () => {
         // Once we get an accessToken, get the user's details and store it in state
         const fetchUserDetails = async () => {
             try {
-                console.log('\naccessToken:', accessToken);
                 const newDetails = await getUserDetails(accessToken);
                 await setUserDetails(newDetails);
             } catch (error) {
@@ -59,15 +58,12 @@ const DashboardScreen = () => {
 
     useEffect(() => {
         const fetchViberPlaylist = async () => {
-            console.log('\nuserDetails: ', userDetails);
-            console.log('\nuserDetails.id: ', userDetails.id);
             try {
                 const fetchedViberPlaylist = await getViberPlaylist(
                     accessToken,
                     userDetails.id
                 );
                 await setViberPlaylist(fetchedViberPlaylist);
-                console.log('\nfetchedViberPlaylist: ', fetchedViberPlaylist);
             } catch (error) {
                 console.error('Error with fetchViberPlaylist', error);
             }
