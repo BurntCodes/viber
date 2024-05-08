@@ -66,7 +66,8 @@ const DashboardScreen = () => {
                     accessToken,
                     userDetails.id
                 );
-                await setViberPlaylist(fetchedViberPlaylist);
+                console.log(fetchedViberPlaylist.viberPlaylist);
+                await setViberPlaylist(fetchedViberPlaylist.viberPlaylist);
             } catch (error) {
                 console.error('Error with fetchViberPlaylist', error);
             }

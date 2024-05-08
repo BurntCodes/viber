@@ -40,7 +40,8 @@ def get_viber_playlist():
     # Of the user's current playlists, try and get the Viber playlist
     viber_playlist = spotify_utils.check_for_viber_playlist(user_playlists)
 
-    spotify_utils.get_top_items(authorization=authorization)
+    top_artists = spotify_utils.get_top_artists(authorization=authorization)
+    recs = spotify_utils.get_recs(authorization=authorization, seed_data=top_artists[0])
 
     # If we don't have a Viber playlist, try and make one, then return it
     if not viber_playlist:
@@ -52,7 +53,9 @@ def get_viber_playlist():
 
         viber_playlist = add_viber_playlist_response[0]
 
-    return viber_playlist
+    viber_data = {"viberPlaylist": viber_playlist, "newRecs": recs}
+
+    return viber_data
 
 
 @spotify_bp.route("/add_tracks_to_playlist", methods=["POST"])

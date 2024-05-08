@@ -3,6 +3,7 @@ import requests
 import json
 
 from ..utilities import api_utils
+import constants
 
 
 VIBER_PLAYLIST_NAME = "VIBER"
@@ -57,9 +58,9 @@ def get_user_playlists(authorization, user_id):
 
 # TODO: use the "total" value in the response combined with the current limit/offset to
 # TODO: to determine if we need to call this function again
-def get_top_items(authorization):
+def get_top_artists(authorization):
     headers = {"Authorization": authorization}
-    params = {"time_range": "short_term", "limit": 10, "offset": 0}
+    params = {"time_range": "short_term", "limit": 5, "offset": 0}
 
     response = requests.get(
         f"https://api.spotify.com/v1/me/top/artists", headers=headers, params=params
@@ -80,3 +81,32 @@ def check_for_viber_playlist(user_playlists):
         if playlist["name"] == VIBER_PLAYLIST_NAME:
             return playlist
     return False
+
+def get_recs(authorization, seed_data):
+    headers = {"Authorization" : authorization}
+
+    seed_artists = ""
+    for artist in seed_data["items"]:
+        seed_artists += f"{artist["id"]},"
+
+    seed_artists = seed_artists[:-1] # remove the last comma. Spotify API doesn't accept it
+
+    params = {
+        "limit": 10,
+        "market": constants.MARKET_CODE,
+        "seed_artists": seed_artists
+    }
+
+    response = requests.get(
+        f"https://api.spotify.com/v1/recommendations", headers=headers, params=params
+    )
+
+    if response.status_code == 200:
+        print("\rrecs:\n")
+        print(json.dumps(response.json(), indent=4))
+        return response.json(), 200
+    else:
+        return jsonify({"error": "failed to get recs from Spotify API"})
+
+
+

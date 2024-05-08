@@ -107,6 +107,8 @@ export const getViberPlaylist = async (accessToken, userID) => {
             headers: headers,
             params: params,
         });
+        console.log('response here:');
+        console.log(JSON.stringify(response, null, 4));
         return response.data;
     } catch (error) {
         console.error('Stack Trace:', error.stack);
