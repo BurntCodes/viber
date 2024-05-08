@@ -5,8 +5,11 @@ import * as SecureStore from 'expo-secure-store';
 
 // Local
 import { styles } from '../styles/styles.js';
-import Button from '../components/Button.tsx';
 import { getUserDetails, getViberPlaylist, getTrackStack } from '../Api';
+
+// Components
+import Button from '../components/Button.tsx';
+import TrackContainer from '../components/TrackContainer.tsx';
 
 // Utilities
 import { axiosInstance } from '../Utils';
@@ -66,8 +69,8 @@ const DashboardScreen = () => {
                     accessToken,
                     userDetails.id
                 );
-                console.log(fetchedViberPlaylist.viberPlaylist);
                 await setViberPlaylist(fetchedViberPlaylist.viberPlaylist);
+                await setTrackStack(fetchedViberPlaylist.newRecs[0].tracks);
             } catch (error) {
                 console.error('Error with fetchViberPlaylist', error);
             }
@@ -78,11 +81,12 @@ const DashboardScreen = () => {
         }
     }, [userDetails]);
 
-    return (
-        <View style={styles.container}>
-            {/* <Text>Access Token: {userDetails}</Text> */}
-        </View>
-    );
+    useEffect(() => {
+        console.log('trackstack:');
+        console.log(JSON.stringify(trackStack, null, 4));
+    }, [trackStack]);
+
+    return <TrackContainer trackStack={trackStack} />;
 };
 
 export default DashboardScreen;
