@@ -2,7 +2,7 @@ from flask import jsonify
 import requests
 import json
 
-from ..utilities import api_utils as api
+from ..utilities import api_utils
 
 
 VIBER_PLAYLIST_NAME = "VIBER"
@@ -44,13 +44,15 @@ def get_user_playlists(authorization, user_id):
         f"https://api.spotify.com/v1/users/{user_id}/playlists", headers=headers
     )
 
-    return api.spotify_response(
+    user_playlists, status_code = api_utils.spotify_response(
         response,
-        callback=api.response_callback(
+        callback=api_utils.response_callback(
             success="Retrieved user playlists:",
-            failure="Failed to Retrieve user playlists:",
+            failure="Failed to Retrieve user playlists",
         ),
     )
+
+    return user_playlists, status_code
 
 
 # TODO: use the "total" value in the response combined with the current limit/offset to
