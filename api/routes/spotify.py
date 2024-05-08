@@ -1,12 +1,13 @@
 from flask import request, jsonify, Blueprint
 import requests
 
-from .utilities import spotify_utils
+from .utilities import spotify_utils, api_utils as api
 
 spotify_bp = Blueprint("spotify", __name__, url_prefix="/spotify")
 
 
 @spotify_bp.route("/get_user_details", methods=["GET"])
+@api.require_auth
 def get_user_details():
     headers = {"Authorization": request.headers.get("Authorization")}
 
@@ -22,6 +23,7 @@ def get_user_details():
 
 
 @spotify_bp.route("/get_viber_playlist", methods=["GET"])
+@api.require_auth
 def get_viber_playlist():
     authorization = request.headers.get("Authorization")
     user_id = request.args.get("user_id")
@@ -37,6 +39,8 @@ def get_viber_playlist():
     # Of the user's current playlists, try and get the Viber playlist
     viber_playlist = spotify_utils.check_for_viber_playlist(user_playlists)
 
+    spotify_utils.get_top_items(authorization=authorization)
+
     # If we don't have a Viber playlist, try and make one, then return it
     if not viber_playlist:
         add_viber_playlist_response = spotify_utils.add_viber_playlist(
@@ -51,14 +55,14 @@ def get_viber_playlist():
 
 
 @spotify_bp.route("/add_tracks_to_playlist", methods=["POST"])
+@api.require_auth
 def add_tracks_to_playlist():
+    playlist_id = request.args.get("playlist_id")
+    uris = request.args.getlist("uris")
     headers = {
         "Authorization": request.headers.get("Authorization"),
         "Content-Type": "application/json",
     }
-    playlist_id = request.args.get("playlist_id")
-    uris = request.args.getlist("uris")
-
     payload = {
         "uris": uris,
         "position": 0,
@@ -77,3 +81,9 @@ def add_tracks_to_playlist():
             jsonify({"error": "Failed to add tracks to playlist"}),
             response.status_code,
         )
+
+
+@spotify_bp.route("get_next_trackbatch", methods=[])
+@api.require_auth
+def get_next_trackbatch():
+    return

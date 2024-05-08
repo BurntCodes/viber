@@ -6,7 +6,7 @@ import * as SecureStore from 'expo-secure-store';
 // Local
 import { styles } from '../styles/styles.js';
 import Button from '../components/Button.tsx';
-import { getUserDetails, getViberPlaylist } from '../Api';
+import { getUserDetails, getViberPlaylist, getTrackStack } from '../Api';
 
 // Utilities
 import { axiosInstance } from '../Utils';
@@ -15,6 +15,9 @@ const DashboardScreen = () => {
     const [accessToken, setAccessToken] = useState(null);
     const [userDetails, setUserDetails] = useState(null);
     const [viberPlaylist, setViberPlaylist] = useState(null);
+    const [trackStack, setTrackStack] = useState([]);
+    const [stackIndex, setStackIndex] = useState(0);
+    const [likedTracks, setLikedTracks] = useState([]);
 
     useEffect(() => {
         // Get accessToken from the secureStore and store it in state

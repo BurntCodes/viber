@@ -3,7 +3,7 @@ from urllib.parse import urlencode
 import requests
 import base64
 
-from .utilities import auth_utils
+from .utilities import auth_utils as auth, api_utils as api
 
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
@@ -15,10 +15,10 @@ CLIENT_ID = "49cf60e6226342958c119f100d66bdf6"
 CLIENT_SECRET = "d218b7960cd44529b7c4906aea895ad3"
 
 
-# TODO: use the only auth_utils functions for PKCE instead.
+# TODO: use the other auth_utils functions for PKCE instead.
 @auth_bp.route("/generate_session_token", methods=["GET"])
 def generate_session_token():
-    session_token = auth_utils.get_secret_token()
+    session_token = auth.get_secret_token()
     tokens["session_token"] = session_token
     return jsonify({"session_token": session_token})
 
@@ -26,7 +26,6 @@ def generate_session_token():
 @auth_bp.route("/get_admin_token", methods=["POST"])
 def get_admin_token():
     headers = {"content-type": "application/x-www-form-urlencoded"}
-
     payload = {
         "grant_type": "client_credentials",
         "client_id": CLIENT_ID,
@@ -49,7 +48,7 @@ def get_admin_token():
 
 
 @auth_bp.route("/get_auth_code", methods=["GET"])
-@auth_utils.require_session_token  # ?
+@api.require_session_token
 def get_auth_code():
     session_token = request.args.get("session_token")
     if session_token != tokens.get("session_token"):
@@ -67,6 +66,7 @@ def get_auth_code():
         "scope": (
             "user-read-email "
             "user-read-private "
+            "user-top-read "
             "playlist-modify-public "
             "playlist-modify-private "
             "playlist-read-private "
@@ -101,7 +101,6 @@ def handle_auth_callback():
     callback_url = (
         "http://192.168.20.9:5000/auth/auth_callback"  # for validation purposes only
     )
-
     authorization_code = (
         "Basic " + base64.b64encode(f"{CLIENT_ID}:{CLIENT_SECRET}".encode()).decode()
     )
@@ -110,7 +109,6 @@ def handle_auth_callback():
         "content-type": "application/x-www-form-urlencoded",
         "Authorization": authorization_code,
     }
-
     payload = {
         "grant_type": "authorization_code",
         "code": auth_code,
