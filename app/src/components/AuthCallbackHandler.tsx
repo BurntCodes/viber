@@ -25,7 +25,7 @@ const AuthCallbackHandler = () => {
                         accessTokenJson
                     );
 
-                    navigation.navigate('Dashboard');
+                    navigation.navigate('Discover');
                 }
             }
         };

@@ -40,9 +40,6 @@ def get_viber_playlist():
     # Of the user's current playlists, try and get the Viber playlist
     viber_playlist = spotify_utils.check_for_viber_playlist(user_playlists)
 
-    top_artists = spotify_utils.get_top_artists(authorization=authorization)
-    recs = spotify_utils.get_recs(authorization=authorization, seed_data=top_artists[0])
-
     # If we don't have a Viber playlist, try and make one, then return it
     if not viber_playlist:
         add_viber_playlist_response = spotify_utils.add_viber_playlist(
@@ -52,6 +49,9 @@ def get_viber_playlist():
             return add_viber_playlist_response
 
         viber_playlist = add_viber_playlist_response[0]
+
+    top_artists = spotify_utils.get_top_artists(authorization=authorization)[0]
+    recs = spotify_utils.get_recs(authorization=authorization, seed_data=top_artists)
 
     viber_data = {"viberPlaylist": viber_playlist, "newRecs": recs}
 
@@ -87,7 +87,12 @@ def add_tracks_to_playlist():
         )
 
 
-@spotify_bp.route("get_next_trackbatch", methods=[])
+@spotify_bp.route("get_next_recs", methods=[])
 @api.require_auth
-def get_next_trackbatch():
-    return
+def get_next_recs():
+    authorization = request.headers.get("Authorization")
+    seed_data = request.args.get("seedData")
+
+    recs = spotify_utils.get_recs(authorization=authorization, seed_data=seed_data)
+
+    return recs
