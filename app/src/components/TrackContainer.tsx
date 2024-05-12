@@ -7,7 +7,7 @@ import Swiper from 'react-native-swiper';
 import { styles } from '../styles/styles.js';
 
 const TrackContainer = ({ appData, setAppData }) => {
-    const trackStack = appData.spotifyData.viberPlaylist.newRecs[0].tracks;
+    const trackStack = appData.spotifyData.trackStack;
     if (trackStack.length === 0) {
         return null;
     }

@@ -37,7 +37,7 @@ const DiscoverScreen = () => {
         spotifyData: {
             viberPlaylist: null,
             trackStack: [],
-            seeds: null,
+            seeds: [],
         },
     });
 
@@ -57,15 +57,15 @@ const DiscoverScreen = () => {
                     // Then get their spotifyData
                     let spotifyData = null;
                     if (userData?.id) {
-                        const viberPlaylist = await getViberPlaylist(
+                        const viberData = await getViberPlaylist(
                             tokenObject,
                             userData.id
                         );
                         const trackStack = await getTrackStack();
                         spotifyData = {
-                            viberPlaylist,
-                            trackStack,
-                            seeds: null,
+                            viberPlaylist: viberData.viberPlaylist,
+                            trackStack: viberData.recData.tracks,
+                            seeds: viberData.recData.seeds,
                         };
                     }
 

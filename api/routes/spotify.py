@@ -51,9 +51,9 @@ def get_viber_playlist():
         viber_playlist = add_viber_playlist_response[0]
 
     top_artists = spotify_utils.get_top_artists(authorization=authorization)[0]
-    recs = spotify_utils.get_recs(authorization=authorization, seed_data=top_artists)
+    recs = spotify_utils.get_recs(authorization=authorization, seed_data=top_artists)[0]
 
-    viber_data = {"viberPlaylist": viber_playlist, "newRecs": recs}
+    viber_data = {"viberPlaylist": viber_playlist, "recData": recs}
 
     return viber_data
 
