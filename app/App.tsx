@@ -7,7 +7,7 @@ import * as SecureStore from 'expo-secure-store';
 
 // Screens
 import HomeScreen from './src/screens/HomeScreen';
-import DashboardScreen from './src/screens/DashboardScreen';
+import DiscoverScreen from './src/screens/DiscoverScreen';
 
 // Utilities
 import AuthCallbackHandler from './src/components/AuthCallbackHandler';
@@ -17,7 +17,7 @@ import AuthCallbackHandler from './src/components/AuthCallbackHandler';
 // // TODO -- get state session token working in api calls in auth.py
 // // TODO -- test checking secure store on home page - display contents
 // TODO -- figure out how to set a route for the deeplink in handle_auth_callback()
-//         TODO -- have that route redirect to DashboardScreen via Navigation
+//         TODO -- have that route redirect to Discoverscreen via Navigation
 // TODO -- generic error handler in Utils.tsx
 // TODO -- typescipt-ify everything
 // TODO -- Fix typescript errors in editor
@@ -32,7 +32,7 @@ const linking = {
     prefixes: ['viber://'],
     config: {
         screens: {
-            DashboardScreen: 'dashboard',
+            DiscoverScreen: 'discover',
         },
     },
 };
@@ -55,7 +55,7 @@ const AppNavigator = () => {
             }}
         >
             <Stack.Screen name="Home" component={HomeScreen} />
-            <Stack.Screen name="Dashboard" component={DashboardScreen} />
+            <Stack.Screen name="Discover" component={DiscoverScreen} />
         </Stack.Navigator>
     );
 };

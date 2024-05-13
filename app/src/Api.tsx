@@ -50,7 +50,7 @@ export const getAdminToken = async (axios: AxiosInstance) => {
 -- A typical successful login:
 -      User is redirected to the spotify login url
 -      User logs in and accepts the access request, receiving an accessToken
--      User is then redirected via deeplink (AuthCallbackHandler) to the Dashboard Screen
+-      User is then redirected via deeplink (AuthCallbackHandler) to the Discover Screen
 -      accessToken is then stored in the SecureStore
 */
 export const login = async () => {
@@ -72,7 +72,7 @@ export const login = async () => {
  * @param {object} accessToken - The access token to be included in the headers as Auth.
  * @returns An object containing the spotify user details.
  */
-export const getUserDetails = async (accessToken) => {
+export const getUserData = async (accessToken) => {
     const url: string = `${BASE_URL}/spotify/get_user_details`;
     const headers = {
         Authorization: `Bearer ${accessToken.access_token}`,

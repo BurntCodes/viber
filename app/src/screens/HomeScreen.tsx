@@ -6,7 +6,7 @@ import * as SecureStore from 'expo-secure-store';
 
 // Local
 import { styles } from '../styles/styles.js';
-import { login, generateSessionToken } from '../Api';
+import { login } from '../Api';
 import Button from '../components/Button';
 
 // Utilities
