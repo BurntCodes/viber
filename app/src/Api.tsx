@@ -93,7 +93,7 @@ export const getUserData = async (accessToken) => {
  * @param {string} userID - The ID of the currently logged on user
  * @returns An object containing the Viber playlist.
  */
-export const getViberPlaylist = async (accessToken, userID) => {
+export const getViberData = async (accessToken, userID) => {
     const url: string = `${BASE_URL}/spotify/get_viber_playlist`;
     const headers = {
         Authorization: `Bearer ${accessToken.access_token}`,

@@ -1,47 +1,77 @@
 // Node Packages
 import React, { useRef, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import Swiper from 'react-native-swiper';
+import { PanGestureHandler, State } from 'react-native-gesture-handler';
+import Animated from 'react-native-reanimated';
 
 // Local
 import { styles } from '../styles/styles.js';
 
 const TrackContainer = ({ appData, setAppData }) => {
-    const trackStack = appData.spotifyData.trackStack;
+    const [trackStack, setTrackStack] = useState(
+        appData.spotifyData.trackStack
+    );
+
     if (trackStack.length === 0) {
         return null;
     }
 
-    const swiperRef = useRef(null); // Base ref for the swiper
-    // const [likedTracks, setLikedTracks] = useState([]);
-    // const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [likedTracks, setLikedTracks] = useState([]);
 
-    // const handleSwipeRight = (index) => {
-    //     const currentTrack = trackStack[currentTrackIndex];
-    //     setLikedTracks((prevLikedTracks) => [...prevLikedTracks, currentTrack]);
-    //     setCurrentTrackIndex(index + 1);
-    // };
+    const onSwipe = (event) => {
+        console.log('onSwipe called');
+        const { translationX, translationY, velocityX, velocityY, state } =
+            event.nativeEvent;
+        console.log('translationX: ', translationX);
+        console.log('translationY: ', translationY);
+        console.log('velocityX: ', velocityX);
+        console.log('velocityY: ', velocityY);
+        console.log('state: ', state);
+        console.log('State.END: ', State.END);
+        console.log('=======');
 
-    // const handleSwipeLeft = (index) => {
-    //     setCurrentTrackIndex(index + 1);
-    // };
+        if (state === State.END) {
+            if (translationX < -50 || (translationX < 0 && velocityX < -100)) {
+                // Left swipe detected
+                console.log('left swipe detected');
+                dropTrack();
+            } else if (
+                translationX > 50 ||
+                (translationX > 0 && velocityX > 100)
+            ) {
+                // Right swipe detected
+                console.log('right swipe detected');
+                dropTrack();
+            }
+        }
+    };
+
+    const dropTrack = () => {
+        // console.log('initial stack: ', trackStack);
+        setTrackStack((prevStack) => prevStack.slice(1));
+        // console.log('new stack:', trackStack);
+    };
+
+    const renderTrackDetails = (track) => {
+        console.log('artist name: ', track.artists[0].name);
+        console.log('track name: ', track.name);
+        return (
+            <View style={styles.trackDetails}>
+                <Text style={styles.text}>{track.artists[0].name}</Text>
+                <Text style={styles.text}>{track.name}</Text>
+            </View>
+        );
+    };
 
     return (
-        <Swiper
-            ref={swiperRef}
-            loop={false}
-            showsPagination={false}
-            onIndexChanged={(index) => console.log('Swiped to index', index)}
-        >
-            {trackStack.map((track, index) => (
-                <View key={index} style={styles.container}>
-                    <Text style={styles.artistName}>
-                        {track.artists[0].name}
-                    </Text>
-                    <Text style={styles.songName}>{track.name}</Text>
-                </View>
-            ))}
-        </Swiper>
+        <View style={styles.trackDetailsContainer}>
+            <PanGestureHandler onHandlerStateChange={onSwipe}>
+                <Animated.View style={styles.trackDetails}>
+                    {trackStack.length > 0 && renderTrackDetails(trackStack[0])}
+                </Animated.View>
+            </PanGestureHandler>
+        </View>
     );
 };
 

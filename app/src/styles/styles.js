@@ -8,6 +8,11 @@ export const styles = StyleSheet.create({
         justifyContent: 'center',
     },
 
+    trackDetailsContainer: {
+        backgroundColor: 'red',
+        padding: 50,
+    },
+
     button: {
         alignItems: 'center',
         justifyContent: 'center',
@@ -16,6 +21,11 @@ export const styles = StyleSheet.create({
         borderRadius: 4,
         elevation: 3,
         backgroundColor: 'black',
+    },
+
+    trackDetails: {
+        backgroundColor: 'blue',
+        padding: 30,
     },
 
     text: {
