@@ -6,6 +6,7 @@ import Animated from 'react-native-reanimated';
 
 // Local
 import { styles } from '../styles/styles.js';
+import { addToPlaylist } from '../Api';
 
 const TrackContainer = ({ appData, setAppData }) => {
     const [trackStack, setTrackStack] = useState(
@@ -19,17 +20,19 @@ const TrackContainer = ({ appData, setAppData }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [likedTracks, setLikedTracks] = useState([]);
 
+    const viberPlaylist = appData.spotifyData.viberPlaylist;
+
     const onSwipe = (event) => {
-        console.log('onSwipe called');
         const { translationX, translationY, velocityX, velocityY, state } =
             event.nativeEvent;
-        console.log('translationX: ', translationX);
-        console.log('translationY: ', translationY);
-        console.log('velocityX: ', velocityX);
-        console.log('velocityY: ', velocityY);
-        console.log('state: ', state);
-        console.log('State.END: ', State.END);
-        console.log('=======');
+
+        // console.log('translationX: ', translationX);
+        // console.log('translationY: ', translationY);
+        // console.log('velocityX: ', velocityX);
+        // console.log('velocityY: ', velocityY);
+        // console.log('state: ', state);
+        // console.log('State.END: ', State.END);
+        // console.log('=======');
 
         if (state === State.END) {
             if (translationX < -50 || (translationX < 0 && velocityX < -100)) {
@@ -42,6 +45,11 @@ const TrackContainer = ({ appData, setAppData }) => {
             ) {
                 // Right swipe detected
                 console.log('right swipe detected');
+                addToPlaylist(
+                    appData.accessToken,
+                    trackStack[0],
+                    viberPlaylist
+                );
                 dropTrack();
             }
         }
@@ -54,8 +62,6 @@ const TrackContainer = ({ appData, setAppData }) => {
     };
 
     const renderTrackDetails = (track) => {
-        console.log('artist name: ', track.artists[0].name);
-        console.log('track name: ', track.name);
         return (
             <View style={styles.trackDetails}>
                 <Text style={styles.text}>{track.artists[0].name}</Text>

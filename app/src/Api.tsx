@@ -115,3 +115,22 @@ export const getViberData = async (accessToken, userID) => {
 };
 
 export const getTrackStack = async (accessToken) => {};
+
+export const addToPlaylist = async (accessToken, track, playList) => {
+    const url: string = `${BASE_URL}/spotify/add_track_to_playlist`;
+    const headers = {
+        Authorization: `Bearer ${accessToken.access_token}`,
+    };
+    const data = {
+        track: track,
+        playList: playList,
+    };
+
+    try {
+        const response = await axios.post(url, data, { headers });
+        return response.data;
+    } catch (error) {
+        console.error('Stack Trace:', error.stack);
+        console.error(error);
+    }
+};

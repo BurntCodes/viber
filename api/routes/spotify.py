@@ -58,31 +58,35 @@ def get_viber_playlist():
     return viber_data
 
 
-@spotify_bp.route("/add_tracks_to_playlist", methods=["POST"])
+@spotify_bp.route("/add_track_to_playlist", methods=["POST"])
 @api.require_auth
-def add_tracks_to_playlist():
-    playlist_id = request.args.get("playlist_id")
-    uris = request.args.getlist("uris")
+def add_track_to_playlist():
+    post_data = request.json
+    track_data = post_data.get("track")
+    track_uri = track_data.get("uri")
+
+    playlist_data = post_data.get("playList")
+    playlist_id = playlist_data.get("id")
+
     headers = {
         "Authorization": request.headers.get("Authorization"),
         "Content-Type": "application/json",
     }
-    payload = {
-        "uris": uris,
-        "position": 0,
-    }
+    payload = {"uris": [track_uri]}
 
-    response = requests.get(
+    response = requests.post(
         f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks",
-        data=payload,
         headers=headers,
+        json=payload,
     )
 
     if response.status_code == 200:
+        print("track added to playlist:")
+        print(json.dumps(track_data, indent=4))
         return response.json(), 200
     else:
         return (
-            jsonify({"error": "Failed to add tracks to playlist"}),
+            jsonify({"error": "Failed to add track to viberPlaylist"}),
             response.status_code,
         )
 
