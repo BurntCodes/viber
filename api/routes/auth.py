@@ -56,7 +56,7 @@ def get_auth_code():
 
     client_id = request.args.get("client_id")
     base_url = "https://accounts.spotify.com/authorize"
-    callback_url = "http://192.168.20.9:5000/auth/auth_callback"
+    callback_url = "http://192.168.1.109:5000/auth/auth_callback"
 
     payload = {
         "client_id": client_id,
@@ -99,7 +99,7 @@ def handle_auth_callback():
         return "State <> session_token mismatch"
 
     callback_url = (
-        "http://192.168.20.9:5000/auth/auth_callback"  # for validation purposes only
+        "http://192.168.1.109:5000/auth/auth_callback"  # for validation purposes only
     )
     authorization_code = (
         "Basic " + base64.b64encode(f"{CLIENT_ID}:{CLIENT_SECRET}".encode()).decode()
@@ -122,7 +122,7 @@ def handle_auth_callback():
     )
 
     access_token = response.json()
-    redirect_url = f"exp://192.168.20.9:8081/?success=true&access_token={access_token}"
+    redirect_url = f"exp://192.168.1.109:8081/?success=true&access_token={access_token}"
 
     if response.status_code == 200:
         tokens["access_token"] = access_token

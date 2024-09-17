@@ -6,7 +6,7 @@ import Animated from 'react-native-reanimated';
 
 // Local
 import { styles } from '../styles/styles.js';
-import { addToPlaylist } from '../Api';
+import { addToPlaylist, getNewRecs } from '../Api';
 
 const TrackContainer = ({ appData, setAppData }) => {
     const [trackStack, setTrackStack] = useState(
@@ -35,23 +35,26 @@ const TrackContainer = ({ appData, setAppData }) => {
         // console.log('=======');
 
         if (state === State.END) {
-            if (translationX < -50 || (translationX < 0 && velocityX < -100)) {
-                // Left swipe detected
-                console.log('left swipe detected');
-                dropTrack();
-            } else if (
-                translationX > 50 ||
-                (translationX > 0 && velocityX > 100)
-            ) {
-                // Right swipe detected
-                console.log('right swipe detected');
-                addToPlaylist(
-                    appData.accessToken,
-                    trackStack[0],
-                    viberPlaylist
-                );
-                dropTrack();
+            // determine if a left or right swipe was detected
+            const isLeftSwipe =
+                translationX < -50 || (translationX < 0 && velocityX < -100);
+            const isRightSwipe =
+                translationX > 50 || (translationX > 0 && velocityX > 100);
+
+            if (isLeftSwipe || isRightSwipe) {
+                handleSwipe(isRightSwipe);
             }
+        }
+    };
+
+    const handleSwipe = (isRightSwipe) => {
+        dropTrack();
+        if (isRightSwipe) {
+            addToPlaylist(appData.accessToken, trackStack[0], viberPlaylist);
+        }
+
+        if (trackStack.length <= 3) {
+            fetchNewRecs();
         }
     };
 
@@ -59,6 +62,21 @@ const TrackContainer = ({ appData, setAppData }) => {
         // console.log('initial stack: ', trackStack);
         setTrackStack((prevStack) => prevStack.slice(1));
         // console.log('new stack:', trackStack);
+    };
+
+    const fetchNewRecs = () => {
+        console.log('less than 3 tracks left');
+        console.log('initial seeds: ', appData.spotifyData.seeds);
+        const newRecs = getNewRecs(
+            appData.accessToken,
+            appData.spotifyData.seeds
+        );
+        console.log('new recs: ', newRecs);
+        console.log('\nHERE\n');
+        // setTrackStack((prevTrackStack) => [
+        //     ...prevTrackStack,
+        //     ...newRecs,
+        // ]);
     };
 
     const renderTrackDetails = (track) => {
