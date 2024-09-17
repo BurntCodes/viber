@@ -51,7 +51,7 @@ export const setupAxiosInstance = async (): Promise<AxiosInstance> => {
     try {
         // Generate a session token
         const url: string =
-            'http://192.168.20.9:5000/auth/generate_session_token';
+            'http://192.168.1.109:5000/auth/generate_session_token';
         const response = await axios.get(url);
         const sessionToken: string = response.data.session_token;
 

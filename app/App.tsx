@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as Linking from 'expo-linking';
 import * as SecureStore from 'expo-secure-store';
 
@@ -39,10 +40,12 @@ const linking = {
 
 const App = () => {
     return (
-        <NavigationContainer linking={linking}>
-            <AuthCallbackHandler />
-            <AppNavigator />
-        </NavigationContainer>
+        <GestureHandlerRootView>
+            <NavigationContainer linking={linking}>
+                <AuthCallbackHandler />
+                <AppNavigator />
+            </NavigationContainer>
+        </GestureHandlerRootView>
     );
 };
 

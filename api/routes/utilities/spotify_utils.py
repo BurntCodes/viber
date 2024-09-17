@@ -2,8 +2,9 @@ from flask import jsonify
 import requests
 import json
 
-from ..utilities import api_utils
+from routes.utilities import api_utils
 import constants
+from models.seed_engine import SeedEngine
 
 
 VIBER_PLAYLIST_NAME = "VIBER"
@@ -82,19 +83,38 @@ def check_for_viber_playlist(user_playlists):
             return playlist
     return False
 
-def get_recs(authorization, seed_data):
+def get_recs(authorization, seed_data, method="seed_data"):
     headers = {"Authorization" : authorization}
+    params = {}
+    new_seeds = ""
 
-    seed_artists = ""
-    for artist in seed_data["items"]:
-        seed_artists += f"{artist["id"]},"
+    print("seed_data in get(recs):")
+    print(json.dumps(seed_data, indent=4))
 
-    seed_artists = seed_artists[:-1] # remove the last comma. Spotify API doesn't accept it
+    if method == "top_artists":
+        new_seeds = ""
+        for artist in seed_data["items"]:
+            new_seeds += f"{artist["id"]},"
+
+        new_seeds = new_seeds[:-1] # remove the last comma. Spotify API doesn't accept it
+
+        params = {
+            "limit": 4,
+            "market": constants.MARKET_CODE,
+            "seed_artists": new_seeds
+        }
+    else:
+        new_seeds = SeedEngine(seed_data).gen_new_seeds()
+
+    # print("prev seeds:")
+    # print(seed_data)
+    # print("new_seeds:")
+    # print(new_seeds)
 
     params = {
-        "limit": 10,
+        "limit": 4,
         "market": constants.MARKET_CODE,
-        "seed_artists": seed_artists
+        "seed_artists": new_seeds
     }
 
     response = requests.get(
@@ -102,7 +122,7 @@ def get_recs(authorization, seed_data):
     )
 
     if response.status_code == 200:
-        print("\rrecs:\n")
+        print("recs:\n")
         print(json.dumps(response.json(), indent=4))
         return response.json(), 200
     else:

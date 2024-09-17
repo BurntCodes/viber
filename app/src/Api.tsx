@@ -9,7 +9,7 @@ import axios from 'axios';
 import { axiosInstance } from './Utils.tsx';
 
 // TODO: Store these somewhere
-const BASE_URL: string = 'http://192.168.20.9:5000';
+const BASE_URL: string = 'http://192.168.1.109:5000';
 const CLIENT_ID: string = '49cf60e6226342958c119f100d66bdf6';
 const CLIENT_SECRET: string = 'd218b7960cd44529b7c4906aea895ad3';
 
@@ -88,12 +88,12 @@ export const getUserData = async (accessToken) => {
 };
 
 /**
- * Gets the Viber playlist
+ * Gets the Viber playlist via the spotify api
  * @param {object} accessToken - The access token to be included in the headers as Auth.
  * @param {string} userID - The ID of the currently logged on user
  * @returns An object containing the Viber playlist.
  */
-export const getViberPlaylist = async (accessToken, userID) => {
+export const getViberData = async (accessToken, userID) => {
     const url: string = `${BASE_URL}/spotify/get_viber_playlist`;
     const headers = {
         Authorization: `Bearer ${accessToken.access_token}`,
@@ -114,4 +114,42 @@ export const getViberPlaylist = async (accessToken, userID) => {
     }
 };
 
-export const getTrackStack = async (accessToken) => {};
+export const getNewRecs = async (accessToken, seeds) => {
+    console.log('seeds in api call:', JSON.stringify(seeds, null, 4));
+    const url: string = `${BASE_URL}/spotify/get_new_recs`;
+    const headers = {
+        Authorization: `Bearer ${accessToken.access_token}`,
+    };
+    const params = {
+        seedData: JSON.stringify(seeds),
+    };
+
+    try {
+        const response = await axios.get(url, {
+            headers: headers,
+            params: params,
+        });
+    } catch (error) {
+        console.error('Stack Trace:', error.stack);
+        console.error(error);
+    }
+};
+
+export const addToPlaylist = async (accessToken, track, playList) => {
+    const url: string = `${BASE_URL}/spotify/add_track_to_playlist`;
+    const headers = {
+        Authorization: `Bearer ${accessToken.access_token}`,
+    };
+    const data = {
+        track: track,
+        playList: playList,
+    };
+
+    try {
+        const response = await axios.post(url, data, { headers });
+        return response.data;
+    } catch (error) {
+        console.error('Stack Trace:', error.stack);
+        console.error(error);
+    }
+};

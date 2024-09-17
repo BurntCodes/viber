@@ -5,7 +5,7 @@ import * as SecureStore from 'expo-secure-store';
 
 // Local
 import { styles } from '../styles/styles';
-import { getUserData, getViberPlaylist, getTrackStack } from '../Api';
+import { getUserData, getViberData } from '../Api';
 
 // Components
 import Button from '../components/Button';
@@ -57,11 +57,10 @@ const DiscoverScreen = () => {
                     // Then get their spotifyData
                     let spotifyData = null;
                     if (userData?.id) {
-                        const viberData = await getViberPlaylist(
+                        const viberData = await getViberData(
                             tokenObject,
                             userData.id
                         );
-                        const trackStack = await getTrackStack();
                         spotifyData = {
                             viberPlaylist: viberData.viberPlaylist,
                             trackStack: viberData.recData.tracks,
@@ -91,7 +90,9 @@ const DiscoverScreen = () => {
     }, [appData]);
 
     return isDataReady ? (
-        <TrackContainer appData={appData} setAppData={setAppData} />
+        <View style={styles.container}>
+            <TrackContainer appData={appData} setAppData={setAppData} />
+        </View>
     ) : null;
 };
 

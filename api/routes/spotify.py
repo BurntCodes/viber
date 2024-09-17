@@ -51,48 +51,58 @@ def get_viber_playlist():
         viber_playlist = add_viber_playlist_response[0]
 
     top_artists = spotify_utils.get_top_artists(authorization=authorization)[0]
-    recs = spotify_utils.get_recs(authorization=authorization, seed_data=top_artists)[0]
+    recs = spotify_utils.get_recs(
+        authorization=authorization, seed_data=top_artists, method="top_artists"
+    )[0]
 
     viber_data = {"viberPlaylist": viber_playlist, "recData": recs}
 
     return viber_data
 
 
-@spotify_bp.route("/add_tracks_to_playlist", methods=["POST"])
+@spotify_bp.route("/add_track_to_playlist", methods=["POST"])
 @api.require_auth
-def add_tracks_to_playlist():
-    playlist_id = request.args.get("playlist_id")
-    uris = request.args.getlist("uris")
+def add_track_to_playlist():
+    post_data = request.json
+    track_data = post_data.get("track")
+    track_uri = track_data.get("uri")
+
+    playlist_data = post_data.get("playList")
+    playlist_id = playlist_data.get("id")
+
     headers = {
         "Authorization": request.headers.get("Authorization"),
         "Content-Type": "application/json",
     }
-    payload = {
-        "uris": uris,
-        "position": 0,
-    }
+    payload = {"uris": [track_uri]}
 
-    response = requests.get(
+    response = requests.post(
         f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks",
-        data=payload,
         headers=headers,
+        json=payload,
     )
 
     if response.status_code == 200:
+        print("track added to playlist:")
+        print(json.dumps(track_data, indent=4))
         return response.json(), 200
     else:
         return (
-            jsonify({"error": "Failed to add tracks to playlist"}),
+            jsonify({"error": "Failed to add track to viberPlaylist"}),
             response.status_code,
         )
 
 
-@spotify_bp.route("get_next_recs", methods=[])
+@spotify_bp.route("get_new_recs", methods=["GET"])
 @api.require_auth
-def get_next_recs():
+def get_new_recs():
     authorization = request.headers.get("Authorization")
     seed_data = request.args.get("seedData")
 
-    recs = spotify_utils.get_recs(authorization=authorization, seed_data=seed_data)
+    new_rec_data = spotify_utils.get_recs(
+        authorization=authorization, seed_data=seed_data
+    )[0]
+    print("new recs:\n")
+    print(new_rec_data.data)
 
-    return recs
+    return new_rec_data
